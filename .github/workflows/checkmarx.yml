@@ -1,0 +1,21 @@
+name: Checkmarx AST scan
+
+on:
+  push:
+    branches: 
+      - main
+      - master 
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Checkmarx AST CLU actions
+        uses: checkmarx/ast-github-action@main
+        with:
+          project_name: CSTC_Akounting
+          cx_tenant: ""
+          base_url: ""
+          cx_client_id: ${{  secrets.CHECKMARX_CLIENT_ID  }}
+          cx_client_secret: ${{  secrets.CHECKMARX_SECRET  }}
