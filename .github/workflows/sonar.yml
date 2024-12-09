@@ -28,27 +28,8 @@ jobs:
     #      php-version: ${{ matrix.php }}
     #      extensions: bcmath, ctype, dom, fileinfo, intl, gd, json, mbstring, pdo, pdo_sqlite, openssl, sqlite, xml, zip
     #      coverage: none
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-      - name: Install SonarQube Scanner CLI
-        run : |
-          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-          unzip sonar-scanner.zip
-          mv sonar-scanner-4.6.2.2472-linux sonar-scanner
-          echo "$(pwd)/sonar-scanner/bin" >> $GITHUB_PATH
-      - name: Run SonarQube Scan
-        env:
-          JAVA_HOME: /path/to/java17
-          PATH: /path/to/java17/bin:${{ runner.tool_cache }}/sonar-scanner/bin:${PATH}
-        run: |
-           sonar-scanner \
-            -Dsonar.projectKey=akaunting \
-            -Dsonar.host.url=${{ secrets.SONAR_URL }} \
-            -Dsonar.login=${{  secrets.SONAR_TOKEN  }} \
-            -Dsonar.sources=. \
-            -Dsonar.php.version=${{  matrix.php }}
+      - name: Official SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4.1.0
+            
           
         
