@@ -1,0 +1,46 @@
+name: SonarQube sacan
+
+on:
+  push:
+    branches: 
+      - main
+jobs:
+  sonarScans:
+    name: SonarScan ${{  matrix.php  }}
+    
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3']
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache Composer
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache/files
+          key: php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: bcmath, ctype, dom, fileinfo, intl, gd, json, mbstring, pdo, pdo_sqlite, openssl, sqlite, xml, zip
+          coverage: none
+
+      - name: Install SonarQube Scanner CLI
+        run : |
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+          unzip sonar-scanner.zip
+          export PATH=$PATH:$(pwd)/sonar-scanner-4.6.2.2472-linux/bin
+      - name: Run SonarQube Scan
+        run: |
+           sonar-scanner \
+            -Dsonar.projectKey=akaunting \
+            -Dsonar.host.url=${{ secrets.SONAR_URL }} \
+            -Dsonar.login=${{  secrets.SONAR_TOKEN  }} \
+            -Dsonar.sources=. \
+            -Dsonar.php.version=${{  matrix.php }}
+          
+        
