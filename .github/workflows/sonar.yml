@@ -22,12 +22,12 @@ jobs:
         with:
           path: ~/.composer/cache/files
           key: php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: bcmath, ctype, dom, fileinfo, intl, gd, json, mbstring, pdo, pdo_sqlite, openssl, sqlite, xml, zip
-          coverage: none
+    #  - name: Setup PHP
+    #    uses: shivammathur/setup-php@v2
+    #    with:
+    #      php-version: ${{ matrix.php }}
+    #      extensions: bcmath, ctype, dom, fileinfo, intl, gd, json, mbstring, pdo, pdo_sqlite, openssl, sqlite, xml, zip
+    #      coverage: none
 
       - name: Install SonarQube Scanner CLI
         run : |
