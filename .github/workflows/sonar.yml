@@ -1,35 +1,50 @@
-name: SonarQube sacan
+name: SonarQube Scan
 
 on:
   push:
-    branches: 
+    branches:
       - main
+
 jobs:
   sonarScans:
-    name: SonarScan ${{  matrix.php  }}
-    
+    name: SonarScan PHP-${{ matrix.php }}
     runs-on: self-hosted
 
     strategy:
       matrix:
-        php: ['8.1']
-        
+        php: ['8.1'] # Add more PHP versions as needed
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Cache Composer
+
+      - name: Cache Composer Dependencies
         uses: actions/cache@v3
         with:
           path: ~/.composer/cache/files
           key: php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
-    #  - name: Setup PHP
-    #    uses: shivammathur/setup-php@v2
-    #    with:
-    #      php-version: ${{ matrix.php }}
-    #      extensions: bcmath, ctype, dom, fileinfo, intl, gd, json, mbstring, pdo, pdo_sqlite, openssl, sqlite, xml, zip
-    #      coverage: none
-      - name: Official SonarQube Scan
+          restore-keys: |
+            php-${{ matrix.php }}-composer-
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: bcmath, ctype, dom, fileinfo, intl, gd, json, mbstring, pdo, pdo_sqlite, openssl, sqlite, xml, zip
+          coverage: none
+
+      - name: Install Project Dependencies
+        run: composer install --no-progress --no-suggest
+
+      - name: Run SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
-            
-          
-        
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
+        with:
+          projectBaseDir: .
+          arguments: >
+            -Dsonar.projectKey=your-project-key
+            -Dsonar.sources=src
+            -Dsonar.language=php
+            -Dsonar.php.coverage.reportPaths=coverage-report.xml
