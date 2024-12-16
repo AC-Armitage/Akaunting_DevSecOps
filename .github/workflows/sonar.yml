@@ -39,3 +39,10 @@ jobs:
             -Dsonar.projectKey=CSTC_ACKOUNTING
             -Dsonar.sources=app,config,resources,routes,tests
             -Dsonar.exclusions=node_modules/**,public/**,storage/**,vendor/**
+      # Let's Play > Getting our sonar quality 
+      - name: SonarQube Quality Gate
+        id: sonar_quality_gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
