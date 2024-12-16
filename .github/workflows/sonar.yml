@@ -35,7 +35,7 @@ jobs:
         with:
           
           projectBaseDir: .
-          arguments: >
+          args: >
             -Dsonar.projectKey=CSTC_ACKOUNTING
             -Dsonar.sources=app,config,resources,routes,tests
             -Dsonar.exclusions=node_modules/**,public/**,storage/**,vendor/**
