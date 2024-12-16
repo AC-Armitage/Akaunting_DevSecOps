@@ -52,15 +52,21 @@ jobs:
     #          echo "Failed quality check!"
     #          exit 1
     #      fi 
-      - name: Build and Push Docker Image
+    #  - name: Build and Push Docker Image
+    #    run: |
+    #     echo "Logging in to Docker Hub..."
+    #     echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
+    #     docker build -t 24cstc/php-app:latest Dockerfile
+    #     docker push 24cstc/php-app:latest
+      - name: Deploy to Kubernetes
         run: |
-         echo "Logging in to Docker Hub..."
-         echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
-         docker build -t 24cstc/php-app:latest Dockerfile
-         docker push 24cstc/php-app:latest
-     # - name: Deploy to Kubernetes
-     #   run: |
-     #     kubectl apply -f kub8s/deploy.yaml
-     #     kubectl rollout status deployment/php-app-deployment
-     #     echo "Deployment successful!"
+          echo "[+] Configuring Kub ..."
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          echo "[+] Deploying..."
+          kubectl apply -f kub8s/deploy.yaml
+          echo "Checking rollout status"
+          kubectl rollout status deployment/php-app-deployment
+          echo "Deployment successful!"
       
