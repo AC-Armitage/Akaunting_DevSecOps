@@ -45,17 +45,23 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Check Quality Gate Status
         run: |
-          QUALITY_GATE_STATUS=$(cat .scannerwork/report-task.txt | grep -oP '(?<=status=)\w+')
-          cat .scannerwork/report-task.txt
-          echo "Quality Gate Status: $QUALITY_GATE_STATUS"
-
-          if [[ "$QUALITY_GATE_STATUS" == "SUCCESS" ]]; then
-            echo "✅ Quality Gate Passed"
-          else
-          echo "Failed quality check!"
-          echo "exiting..."
-          exit 1
+          curl -u ${{ secrets.SONAR_TOKEN }}: ${{ secrets.SONAR_URL}}/api/qualitygates/project_status?projectKey=CSTC_ACKOUNTING > result.json
+          quality_gate_status=$(jq -r .projectStatus.status result.json)
+          echo "Quality gate status: $quality_gate_status"
+           if [[ "$quality_gate_status" != "OK" ]]; then
+              echo "Failed quality check!"
+              exit 1
           fi
-        
-          
+       #echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Build and Push Docker Image
+        run: |
+         echo "Logging in to Docker Hub..."
+         echo "cstc_est@@24" | docker login -u "24cstc" --password-stdin
+         docker build -t 24cstc/php-app:latest Dockerfile
+         docker push 24cstc/php-app:latest
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f kub8s/deploy.yaml
+          kubectl rollout status deployment/php-app-deployment
+          echo "Deployment successful!"
       
