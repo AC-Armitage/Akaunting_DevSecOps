@@ -35,7 +35,7 @@ jobs:
           
           projectBaseDir: .
           args: >
-            -Dsonar.projectKey=CSTC_ACKOUNTING
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJ_CODE }}
             -Dsonar.sources=app,config,resources,routes,tests
             -Dsonar.exclusions=node_modules/**,public/**,storage/**,vendor/**
       - name: SonarQube Quality Gate
@@ -45,18 +45,17 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Check Quality Gate Status
         run: |
-          curl -u ${{ secrets.SONAR_TOKEN }}: ${{ secrets.SONAR_URL}}/api/qualitygates/project_status?projectKey=CSTC_ACKOUNTING > result.json
+          curl -u ${{ secrets.SONAR_TOKEN }}: ${{ secrets.SONAR_URL}}/api/qualitygates/project_status?projectKey=${{ secrets.SONAR_PROJ_CODE }} > result.json
           quality_gate_status=$(jq -r .projectStatus.status result.json)
           echo "Quality gate status: $quality_gate_status"
            if [[ "$quality_gate_status" != "OK" ]]; then
               echo "Failed quality check!"
               exit 1
           fi
-       #echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       - name: Build and Push Docker Image
         run: |
          echo "Logging in to Docker Hub..."
-         echo "cstc_est@@24" | docker login -u "24cstc" --password-stdin
+         echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
          docker build -t 24cstc/php-app:latest Dockerfile
          docker push 24cstc/php-app:latest
       - name: Deploy to Kubernetes
