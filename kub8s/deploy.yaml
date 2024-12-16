@@ -16,10 +16,11 @@ spec:
     spec:
       containers:
         - name: php-app
-          image: 24cstc/php:latest  
+          image: 24cstc/php:latest
           ports:
             - containerPort: 80
-
+      imagePullSecrets:
+        - name: dk-secret
 ---
 apiVersion: v1
 kind: Service
@@ -30,6 +31,6 @@ spec:
     app: php-app
   ports:
     - protocol: TCP
-      port: 80         
-      targetPort: 80    
-  type: NodePort       
+      port: 80
+      targetPort: 80
+  type: NodePort     
