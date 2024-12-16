@@ -39,6 +39,7 @@ jobs:
             -Dsonar.projectKey=CSTC_ACKOUNTING
             -Dsonar.sources=app,config,resources,routes,tests
             -Dsonar.exclusions=node_modules/**,public/**,storage/**,vendor/**
+            -Dsonar.analysis.mode=analysis
       # Let's Play > Getting our sonar quality 
       - name: SonarQube Quality Gate
         id: sonar_quality_gate
