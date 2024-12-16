@@ -26,7 +26,7 @@ jobs:
           ssh-key: ${{ secrets.CSTX_SSH_KEY }}
           repository: ${{ github.repository }}
           submodules: true
-        # not bothering with PHP anymore
+        # not bothering with PHP anymore :)
       - name: Run SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
