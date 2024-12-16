@@ -12,39 +12,21 @@ jobs:
 
     strategy:
       matrix:
-        php: ['8.1'] # Add more PHP versions as needed
+        php: ['8.1'] 
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Cache Composer Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
-          restore-keys: |
-            php-${{ matrix.php }}-composer-
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: bcmath, ctype, dom, fileinfo, intl, gd, json, mbstring, pdo, pdo_sqlite, openssl, sqlite, xml, zip
-          coverage: none
-
-      - name: Install Project Dependencies
-        run: composer install --no-progress --no-suggest
-
+        # not bothering with PHP anymore
       - name: Run SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
         with:
+          #scannerBinariesUrl: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli
           projectBaseDir: .
           arguments: >
-            -Dsonar.projectKey=your-project-key
-            -Dsonar.sources=src
-            -Dsonar.language=php
-            -Dsonar.php.coverage.reportPaths=coverage-report.xml
+            -Dsonar.projectKey=CSTC_ACKOUNTING
+            -Dsonar.sources=app,config,resources,routes,tests
+            -Dsonar.exclusions=node_modules/**,public/**,storage/**,vendor/**
