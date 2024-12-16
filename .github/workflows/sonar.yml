@@ -33,7 +33,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
         with:
-          #scannerBinariesUrl: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli
+          
           projectBaseDir: .
           arguments: >
             -Dsonar.projectKey=CSTC_ACKOUNTING
