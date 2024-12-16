@@ -26,7 +26,6 @@ jobs:
           ssh-key: ${{ secrets.CSTX_SSH_KEY }}
           repository: ${{ github.repository }}
           submodules: true
-        # not bothering with PHP anymore :)
       - name: Run SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
@@ -39,17 +38,16 @@ jobs:
             -Dsonar.projectKey=CSTC_ACKOUNTING
             -Dsonar.sources=app,config,resources,routes,tests
             -Dsonar.exclusions=node_modules/**,public/**,storage/**,vendor/**
-            -Dsonar.analysis.mode=analysis
-      # Let's Play > Getting our sonar quality 
       - name: SonarQube Quality Gate
         id: sonar_quality_gate
         uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          #adding conditions
-      - name: Exit if SonarQube Quality FAILED
+      - name: Exit if SonarQube Quality fails
         if: steps.sonar_quality_gate.outputs.quality_gate_status != 'PASSED'
         run: |
-          echo "SONARQUBE THINKS THAT IT SHOULDN'T BE DEPLOYED"
+          echo "Failed quality check!"
+          echo "exiting..."
           exit 1
+          
       
