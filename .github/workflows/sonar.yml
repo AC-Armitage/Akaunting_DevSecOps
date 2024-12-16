@@ -43,16 +43,19 @@ jobs:
         uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: Check Quality Gate
+      - name: Check Quality Gate Status
         run: |
-          echo "✅ Quality Gate Passed: ${{ steps.quality-gate-check.outputs.quality-gate-status }}"
-          echo "${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
-      - name: Exit if SonarQube Quality fails
-        if: steps.quality-gate-check.outputs.quality-gate-status != 'PASSED'
-        run: |
+          QUALITY_GATE_STATUS=$(cat .scannerwork/report-task.txt | grep -oP '(?<=status=)\w+')
+          cat .scannerwork/report-task.txt
+          echo "Quality Gate Status: $QUALITY_GATE_STATUS"
+
+          if [[ "$QUALITY_GATE_STATUS" == "SUCCESS" ]]; then
+            echo "✅ Quality Gate Passed"
+          else
           echo "Failed quality check!"
           echo "exiting..."
           exit 1
+          fi
         
           
       
