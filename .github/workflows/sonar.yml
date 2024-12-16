@@ -43,8 +43,12 @@ jobs:
         uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Check Quality Gate
+        run: |
+          echo "✅ Quality Gate Passed: ${{ steps.quality-gate-check.outputs.quality-gate-status }}"
+          echo "${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
       - name: Exit if SonarQube Quality fails
-        if: steps.sonarqube-quality-gate-check.outputs.quality-gate-status != 'PASSED'
+        if: steps.quality-gate-check.outputs.quality-gate-status != 'PASSED'
         run: |
           echo "Failed quality check!"
           echo "exiting..."
