@@ -15,8 +15,17 @@ jobs:
         php: ['8.1'] 
 
     steps:
+      - name: Adding GitHub to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+        
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.CSTX_SSH_KEY }}
+          repository: ${{ github.repository }}
+          submodules: true
         # not bothering with PHP anymore
       - name: Run SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
