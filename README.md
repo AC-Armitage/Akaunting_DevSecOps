@@ -66,4 +66,4 @@ Please review [our security policy](https://github.com/akaunting/akaunting/secur
 
 ## License
 
-Akaunting is released under the [BSL license](LICENSE.txt).
+Akaunting is released under the [BSL license](LICENSE.txt)
