@@ -46,4 +46,10 @@ jobs:
         uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          #adding conditions
+      - name: Exit if SonarQube Quality FAILED
+        if: steps.sonar_quality_gate.outputs.quality_gate_status != 'PASSED'
+        run: |
+          echo "SONARQUBE THINKS THAT IT SHOULDN'T BE DEPLOYED"
+          exit 1
       
