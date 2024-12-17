@@ -52,12 +52,14 @@ jobs:
     #          echo "Failed quality check!"
     #          exit 1
     #      fi 
-    #  - name: Build and Push Docker Image
-    #    run: |
-    #     echo "Logging in to Docker Hub..."
-    #     echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
-    #     docker build -t 24cstc/php-app:latest Dockerfile
-    #     docker push 24cstc/php-app:latest
+      - name: Build and Push Docker Image
+        run: |
+         echo "Logging in to Docker Hub..."
+         echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
+         docker build -t 24cstc/php-app:latest Dockerfile
+         docker push 24cstc/php-app:latest
+    # [!] لا حول ولا قوة
+    # [!] wesh mnytk RA KHASK TCHARJI L BINARY D kubectl MFAFASPFJF
       - name: Deploy to Kubernetes
         run: |
           echo "[+] Configuring Kub ..."
