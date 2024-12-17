@@ -56,10 +56,8 @@ jobs:
         run: |
          echo "Logging in to Docker Hub..."
          echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
-         docker build -t 24cstc/php-app:latest .
+         docker build -t 24cstc/cstc_akounting-app:latest .
          docker push 24cstc/cstc_akounting:latest
-    # [!] لا حول ولا قوة
-    # [!] wesh mnytk RA KHASK TCHARJI L BINARY D kubectl MFAFASPFJF
     # - name: Deploy to Kubernetes
     #    run: |
     #      echo "[+] Configuring Kub ..."
