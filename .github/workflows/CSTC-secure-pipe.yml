@@ -56,7 +56,7 @@ jobs:
         run: |
          echo "Logging in to Docker Hub..."
          echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
-         docker build -t docker.io/24cstc/cstc_akounting:latest
+         docker build -t docker.io/24cstc/cstc_akounting:latest .
          docker push docker.io/24cstc/cstc_akounting:latest 
     # - name: Deploy to Kubernetes
     #    run: |
