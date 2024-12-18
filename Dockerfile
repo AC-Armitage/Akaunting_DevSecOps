@@ -28,22 +28,23 @@ WORKDIR /var/www/html
 
 # Copy application files
 COPY . .
-
+RUN chown -R www-data:www-data /var/www/html \
+	&& chmod -R 775 /var/www/html/storage \ 
+	&& chmod -R 775 /var/www/html/bootstrap/cache
 # Install PHP and JavaScript dependencies
 RUN composer install --no-dev --optimize-autoloader \
     && npm install \
     && npm run dev
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html 
+
+
 # Expose the default HTTP port
 EXPOSE 80
 
-# Command to run the application install
 CMD php artisan install \
-    --db-name="akaunting" \
-    --db-username="root" \
-    --db-password="00110011" \
-    --admin-email="$z@h.j" \
-    --admin-password="admriana" && apache2-foreground
+    --db-name="${DB_NAME}" \
+    --db-username="${DB_USERNAME}" \
+    --db-password="${DB_PASSWORD}" \
+    --admin-email="${ADMIN_EMAIL}" \
+    --admin-password="${ADMIN_PASSWORD}" && apache2-foreground
 
