@@ -58,15 +58,15 @@ jobs:
          echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
          docker build -t docker.io/24cstc/cstc_akounting:latest .
          docker push docker.io/24cstc/cstc_akounting:latest 
-     - name: Deploy to Kubernetes
-        run: |
-          echo "[+] Configuring Kub ..."
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-          echo "[+] Deploying..."
-          kubectl apply -f kub8s/deploy.yaml
-          echo "Checking rollout status"
-          kubectl rollout status deployment/php-app-deployment
+     #- name: Deploy to Kubernetes
+     #   run: |
+     #     echo "[+] Configuring Kub ..."
+     #     mkdir -p $HOME/.kube
+     #     echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+     #     chmod 600 $HOME/.kube/config
+     #     echo "[+] Deploying..."
+     #     kubectl apply -f kub8s/deploy.yaml
+     #     echo "Checking rollout status"
+     #     kubectl rollout status deployment/php-app-deployment
           echo "Deployment successful!"
       
