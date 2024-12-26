@@ -26,47 +26,47 @@ jobs:
           ssh-key: ${{ secrets.CSTX_SSH_KEY }}
           repository: ${{ github.repository }}
           submodules: true
-    #  - name: Run SonarQube Scan
-    #    uses: SonarSource/sonarqube-scan-action@v4.1.0
-    #    env:
-    #      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    #      SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
-    #    with:
+      - name: Run SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
+        with:
           
-    #      projectBaseDir: .
-    #      args: >
-    #        -Dsonar.projectKey=${{ secrets.SONAR_PROJ_CODE }}
-    #        -Dsonar.sources=app,config,resources,routes,tests
-    #        -Dsonar.exclusions=node_modules/**,public/**,storage/**,vendor/**
-    #  - name: SonarQube Quality Gate
-    #    id: sonar_quality_gate
-    #    uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
-    #    env:
-    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    #  - name: Check Quality Gate Status
-    #    run: |
-    #      curl -u ${{ secrets.SONAR_TOKEN }}: ${{ secrets.SONAR_URL}}/api/qualitygates/project_status?projectKey=${{ secrets.SONAR_PROJ_CODE }} > result.json
-    #      quality_gate_status=$(jq -r .projectStatus.status result.json)
-    #      echo "Quality gate status: $quality_gate_status"
-    #       if [[ "$quality_gate_status" != "OK" ]]; then
-    #          echo "Failed quality check!"
-    #          exit 1
-    #      fi 
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJ_CODE }}
+            -Dsonar.sources=app,config,resources,routes,tests
+            -Dsonar.exclusions=node_modules/**,public/**,storage/**,vendor/**
+      - name: SonarQube Quality Gate
+        id: sonar_quality_gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+        env:
+         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Check Quality Gate Status
+        run: |
+          curl -u ${{ secrets.SONAR_TOKEN }}: ${{ secrets.SONAR_URL}}/api/qualitygates/project_status?projectKey=${{ secrets.SONAR_PROJ_CODE }} > result.json
+          quality_gate_status=$(jq -r .projectStatus.status result.json)
+          echo "Quality gate status: $quality_gate_status"
+           if [[ "$quality_gate_status" != "OK" ]]; then
+              echo "Failed quality check!"
+              exit 1
+          fi 
       - name: Build and Push Docker Image
         run: |
          echo "Logging in to Docker Hub..."
          echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
          docker build -t docker.io/24cstc/cstc_akounting:latest .
          docker push docker.io/24cstc/cstc_akounting:latest 
-    # - name: Deploy to Kubernetes
-    #    run: |
-    #      echo "[+] Configuring Kub ..."
-    #      mkdir -p $HOME/.kube
-    #      echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-    #      chmod 600 $HOME/.kube/config
-    #      echo "[+] Deploying..."
-    #      kubectl apply -f kub8s/deploy.yaml
-    #      echo "Checking rollout status"
-    #      kubectl rollout status deployment/php-app-deployment
-    #      echo "Deployment successful!"
+     - name: Deploy to Kubernetes
+        run: |
+          echo "[+] Configuring Kub ..."
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          echo "[+] Deploying..."
+          kubectl apply -f kub8s/deploy.yaml
+          echo "Checking rollout status"
+          kubectl rollout status deployment/php-app-deployment
+          echo "Deployment successful!"
       

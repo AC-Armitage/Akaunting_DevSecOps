@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: php-app
-          image: 24cstc/php:latest
+          image: 24cstc/cstc_akounting:latest
           ports:
             - containerPort: 80
       imagePullSecrets:
