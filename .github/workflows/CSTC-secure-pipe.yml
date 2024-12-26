@@ -78,9 +78,5 @@ jobs:
      #     kubectl apply -f kub8s/deploy.yaml
      #     echo "Checking rollout status"
      #     kubectl rollout status deployment/php-app-deployment
-<<<<<<< HEAD
      #     echo "Deployment successful!"
-=======
-          echo "Deployment successful!"
->>>>>>> 4c9983299816169eb941acced462a4fa6798ffbe
       
