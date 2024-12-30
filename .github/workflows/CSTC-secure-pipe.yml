@@ -43,11 +43,11 @@ jobs:
           curl -u ${{ secrets.SONAR_TOKEN }}: ${{ secrets.SONAR_URL}}/api/qualitygates/project_status?projectKey=${{ secrets.SONAR_PROJ_CODE }} > result.json
           quality_gate_status=$(jq -r .projectStatus.status result.json)
           echo "Quality gate status: $quality_gate_status"
-           if [[ "$quality_gate_status" != "OK" ]]; then
+          if [[ "$quality_gate_status" != "OK" ]]; then
               echo "Failed quality check!"
               exit 1
           fi 
-  Build-and-Deploy:
+  Build-and-Push:
     needs: sonarScans
     name: Build
     runs-on: ubuntu-latest
@@ -66,19 +66,45 @@ jobs:
       - name: Build and Push Docker Image
         run: |
          echo "Logging in to Docker Hub..."
-         #echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
-         docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} -p ${{ secrets.CSTC_DOCKER_PASSWORD }}
-         docker build -t docker.io/24cstc/cstc_akounting:latest .
-         docker push docker.io/24cstc/cstc_akounting:latest 
-     #- name: Deploy to Kubernetes
-     #   run: |
-     #     echo "[+] Configuring Kub ..."
-     #     mkdir -p $HOME/.kube
-     #     echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-     #     chmod 600 $HOME/.kube/config
-     #     echo "[+] Deploying..."
-     #     kubectl apply -f kub8s/deploy.yaml
-     #     echo "Checking rollout status"
-     #     kubectl rollout status deployment/php-app-deployment
-     #     echo "Deployment successful!"
-      
+         echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
+         docker build -t docker.io/cstciiiichabir/cstc_akounting:latest .
+         docker push docker.io/cstciiiichabir/cstc_akounting:latest 
+    Deploy-to-Kubernetes:
+      needs: Build-and-Push
+      name: Deploy new image to kubernetes
+      runs-on: self-hosted
+      steps:
+      - name: Adding GitHub to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+        
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.CSTX_SSH_KEY }}
+          repository: ${{ github.repository }}
+          submodules: true 
+      - name: install kubectl
+        run: | 
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          mkdir -p ~/.local/bin
+          export PATH=$PATH:~/.local/bin
+          mv ./kubectl ~/.local/bin/kubectl
+          kubectl version --client
+      - name: configuring Kub8s
+        run: |
+          mkdir -p ~/.kube
+          mkdir -p ~/.minikube/cstc/minikube/
+          echo ${{ secrets.CSTC_KUBE_CONFIG_B64 }} | base64 --decode > ~/.kube/config
+          echo ${{ secrets.CSTC_CA_CERT_B64 }} | base64 --decode > ~/.minikube/ca.crt
+          echo ${{ secrets.CSTC_CLIENT_CERT_B64 }} | base64 --decode > ~/.minikube/profiles/cstc/client.crt 
+          echo ${{ secrets.CSTC_CLIENT_KEY_B64 }} |  base64 --decode > ~/.minikube/profiles/cstc/client.crt
+      - name: Apply Kubernetes deployment
+        run: |
+          kubectl apply -f kubernetes/cstc-sealed-secrets.yaml
+          kubectl apply -f kubernetes/cstc-config-map.yaml
+          kubectl apply -f kubernetes/cstc-app-depl.yaml
+      - name: clean up
+        ~/rm -rf .minikube
