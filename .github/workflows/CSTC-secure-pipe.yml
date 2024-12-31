@@ -98,11 +98,11 @@ jobs:
       - name: configuring Kub8s
         run: |
           mkdir -p ~/.kube
-          mkdir -p ~/.minikube/cstc/
+          mkdir -p ~/.minikube/
           echo "${{ secrets.CSTC_KUBE_CONFIG_B64 }}" | base64 --decode > ~/.kube/config
           echo "${{ secrets.CSTC_CA_CERT_B64 }}" | base64 --decode > ~/.minikube/ca.crt
-          echo "${{ secrets.CSTC_CLIENT_CERT_B64 }}" | base64 --decode > ~/.minikube/cstc/client.crt 
-          echo "${{ secrets.CSTC_CLIENT_KEY_B64 }}" |  base64 --decode > ~/.minikube/cstc/client.key
+          echo "${{ secrets.CSTC_CLIENT_CERT_B64 }}" | base64 --decode > ~/.minikube/client.crt 
+          echo "${{ secrets.CSTC_CLIENT_KEY_B64 }}" |  base64 --decode > ~/.minikube/client.key
       - name: Apply Kubernetes deployment
         run: |
           kubectl apply -f kubernetes/cstc-sealed-secrets.yaml
