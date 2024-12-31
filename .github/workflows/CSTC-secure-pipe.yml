@@ -107,5 +107,5 @@ jobs:
           kubectl apply -f kubernetes/cstc-config-map.yaml
           kubectl apply -f kubernetes/cstc-app-depl.yaml
       - name: clean up
-          run: |
+        run: |
             ~/rm -rf .minikube
