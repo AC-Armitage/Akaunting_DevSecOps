@@ -69,7 +69,7 @@ jobs:
          echo ${{ secrets.CSTC_DOCKER_PASSWORD }} | docker login -u ${{ secrets.CSTC_DOCKER_LOGIN }} --password-stdin
          docker build -t docker.io/cstciiiichabir/cstc_akounting:latest .
          docker push docker.io/cstciiiichabir/cstc_akounting:latest 
-    Deploy-to-Kubernetes:
+  Deploy-to-Kubernetes:
       needs: Build-and-Push
       name: Deploy new image to kubernetes
       runs-on: self-hosted
