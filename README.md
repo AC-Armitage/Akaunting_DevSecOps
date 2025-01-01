@@ -2,8 +2,9 @@
 This repository contains the **DevSecOps Project** for **Professor Baddi** at **ESTSB**. It showcases a complete CI/CD pipeline leveraging modern DevSecOps practices to a ensure secure application development and deployment.
 We used Akaunting application code in this repo we do not own any of the code we have only added  the DevSecOps pipeline  and its related files.
 
-![[CSTC-DEVSECOPS.drawio.svg]]
 Here is an overview of how the workflow works: 
+![Workflow Diagram](img/CSTC-DEVSECOPS.drawio.svg)
+
 - **Developer Push**: Developers push code to the GitHub repository.
 
 - **GitHub Actions**: Triggers workflows for:
