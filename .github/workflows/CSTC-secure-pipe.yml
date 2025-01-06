@@ -22,7 +22,7 @@ jobs:
           repository: ${{ github.repository }}
           submodules: true
       - name: Install jq and zip
-        runs: |
+        run : |
           sudo apt update -y
           sudo apt install jq zip -y
       - name: Run SonarQube Scan
