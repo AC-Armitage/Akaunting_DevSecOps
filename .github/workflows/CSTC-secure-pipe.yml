@@ -21,6 +21,10 @@ jobs:
           ssh-key: ${{ secrets.CSTX_SSH_KEY }}
           repository: ${{ github.repository }}
           submodules: true
+      - name: Install jq and zip
+        runs: |
+          sudo apt update -y
+          sudo apt install jq zip -y
       - name: Run SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
