@@ -8,7 +8,6 @@ on:
 jobs:
   sonarScans:
     name: SonarScan Job
-    runs-on: self-hosted
     steps:
       - name: Adding GitHub to known_hosts
         run: |
@@ -89,11 +88,11 @@ jobs:
           submodules: true 
       - name: install kubectl
         run: | 
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          mkdir -p ~/.local/bin
+          #curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          #chmod +x kubectl
+          #mkdir -p ~/.local/bin
           export PATH=$PATH:~/.local/bin
-          mv ./kubectl ~/.local/bin/kubectl
+          #mv ./kubectl ~/.local/bin/kubectl
           kubectl version --client
       - name: configuring Kub8s
         run: |
